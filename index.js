@@ -48,4 +48,4 @@ app.get('/token', function(request, response) {
     });
 });
 
-
+module.exports =app
