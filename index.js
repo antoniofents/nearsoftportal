@@ -51,7 +51,8 @@ app.get('/token', function(request, response) {
 
 // Create http server and run it
 var server = http.createServer(app);
-var port = process.env.PORT || 3000;
-server.listen(80,"0.0.0.0", function() {
+var port = process.env.PORT || 443;
+server.listen(port, "0.0.0.0", function() {
+
     console.log('Express server running on *:' + port);
 });
