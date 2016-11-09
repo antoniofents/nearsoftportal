@@ -24,20 +24,21 @@ $.getJSON('/token', function (data) {
   document.getElementById('button-join').onclick = function () {
     roomName = document.getElementById('room-name').value;
     if (roomName) {
-      log("Joining room '" + roomName + "'...");
+      log("Joining to portal '" + roomName + "'...");
+
 
       videoClient.connect({ to: roomName}).then(roomJoined,
         function(error) {
-          log('Could not connect to Twilio: ' + error.message);
+          log('Could not connect : ' + error.message);
         });
     } else {
-      alert('Please enter a room name.');
+      alert('Please enter a office name.');
     }
   };
 
   // Bind button to leave room
   document.getElementById('button-leave').onclick = function () {
-    log('Leaving room...');
+    log('Leaving portal...');
     activeRoom.disconnect();
   };
 });
