@@ -3,6 +3,41 @@
 <head>
   <title>nearsoft portal</title>
   <link rel="stylesheet" href="site.css">
+
+<script>
+
+    sendImage = function( callback){
+
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        var img = document.getElementsByTagName("video")[0];
+       
+        ctx.drawImage(img, 10, 10);
+
+        var datos='{"name":"'+c.toDataURL()+'"}'; 
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function(){
+            if (request.readyState == 4 && request.status == 200)
+            {
+                callback(request.responseText); // Another callback here
+            }
+        }; 
+        request.open('POST', "https://portalrecon.azurewebsites.net/api/HttpTriggerCSharp4?code=VQsD1cXwhjRVRaCcpWB3EeC0nj6P2ptS9YcY1SbLSEqLow5PYcGbrA==");
+        request.setRequestHeader('Access-Control-Allow-Headers', '*');
+        request.setRequestHeader('Content-Type', 'application/json');
+        
+        request.send(datos);
+    }
+
+    function mycallback(data) {
+       alert(data);
+    }
+
+    function tomaFoto() {
+      sendImage( mycallback)
+    }
+  
+</script>
  </head>
 <body>
   <div id="remote-media"></div>
@@ -17,6 +52,9 @@
       <input id="room-name" type="text" placeholder="Enter a office name" />
       <button id="button-join">JOIN PORTAL</button>
       <button id="button-leave">LEAVE PORTAL</button>
+    
+      <input type="button" value="Enviar Foto" onclick="tomaFoto()" > </input>
+
     </div>
     <div id="log"></div>
   </div>
@@ -25,5 +63,8 @@
   <script src="//media.twiliocdn.com/sdk/js/video/releases/1.0.0-beta2/twilio-video.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script src="quickstart.js"></script>
+  <canvas id="myCanvas" width="700" height="500" style=" display: none ">
+
+
 </body>
 </html>
