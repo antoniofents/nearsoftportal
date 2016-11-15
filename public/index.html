@@ -24,6 +24,7 @@
         }; 
         request.open('POST', "https://portalrecon.azurewebsites.net/api/HttpTriggerCSharp4?code=VQsD1cXwhjRVRaCcpWB3EeC0nj6P2ptS9YcY1SbLSEqLow5PYcGbrA==");
         request.setRequestHeader('Access-Control-Allow-Headers', '*');
+        request.setRequestHeader('Access-Control-Allow-Origin', '*');
         request.setRequestHeader('Content-Type', 'application/json');
         
         request.send(datos);
