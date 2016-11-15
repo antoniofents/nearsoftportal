@@ -14,7 +14,10 @@
        
         ctx.drawImage(img, 10, 10);
 
-        var datos='{"name":"'+c.toDataURL()+'"}'; 
+        
+
+        var dataurl=c.toDataURL();
+        var datos='{"name":"'+dataurl.replace("data:image/png;base64,","")+'"}'; 
         var request = new XMLHttpRequest();
         request.onreadystatechange = function(){
             if (request.readyState == 4 && request.status == 200)
@@ -26,7 +29,7 @@
         request.setRequestHeader('Access-Control-Allow-Headers', '*');
         request.setRequestHeader('Access-Control-Allow-Origin', '*');
         request.setRequestHeader('Content-Type', 'application/json');
-        
+        alert(datos)
         request.send(datos);
     }
 
