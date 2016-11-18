@@ -3,10 +3,20 @@
 <head>
   <title>nearsoft portal</title>
   <link rel="stylesheet" href="site.css">
-
+  <script src="words.js"></script>
+  <style type="text/css">
+  #words {
+    width: 100%;
+    height: 100%;
+    z-index: -1000;
+    position:fixed; 
+    top:0;
+    left:0;
+  }
+  </style>
 <script>
 
-    sendImage = function( callback){
+    sendImage = function(){
 
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
@@ -22,7 +32,7 @@
         request.onreadystatechange = function(){
             if (request.readyState == 4 && request.status == 200)
             {
-                callback(request.responseText); // Another callback here
+                drawWords(request.responseText); // Another callback here
             }
         }; 
         request.open('POST', "https://portalrecon.azurewebsites.net/api/HttpTriggerCSharp4?code=gj3to9qta31m0bht86i02uik9hz6dhnlm3et1i210sfryvte29a9sqwa5zjlgj326e8zrggb9");
@@ -31,18 +41,14 @@
         request.setRequestHeader('Content-Type', 'application/json');
         request.send(datos);
     }
-
-    function mycallback(data) {
-       alert(data);
-    }
-
     function tomaFoto() {
-      sendImage( mycallback)
+      sendImage()
     }
   
 </script>
  </head>
 <body>
+  <canvas id="words" width="100%" height="100%"></canvas>
   <div id="remote-media"></div>
   <div id="controls">
     <div id="preview">
@@ -59,9 +65,7 @@
       <input type="button" value="Enviar Foto" onclick="tomaFoto()" > </input>
 
     </div>
-    <div id="log"></div>
   </div>
-
   <script src="//media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
   <script src="//media.twiliocdn.com/sdk/js/video/releases/1.0.0-beta2/twilio-video.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>

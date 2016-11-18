@@ -105,9 +105,7 @@ document.getElementById('button-preview').onclick = function () {
 
 // Activity log
 function log(message) {
-  var logDiv = document.getElementById('log');
-  logDiv.innerHTML += '<p>&gt;&nbsp;' + message + '</p>';
-  logDiv.scrollTop = logDiv.scrollHeight;
+  console.log(message);
 }
 
 function leaveRoomIfJoined() {
