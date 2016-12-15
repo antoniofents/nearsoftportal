@@ -1,115 +1,67 @@
-var videoClient;
-var activeRoom;
-var previewMedia;
-var identity;
-var roomName;
-
-// Check for WebRTC
-if (!navigator.webkitGetUserMedia && !navigator.mozGetUserMedia) {
-  alert('WebRTC is not available in your browser.');
-}
-
-// When we are about to transition away from this page, disconnect
-// from the room, if joined.
-window.addEventListener('beforeunload', leaveRoomIfJoined);
-
-$.getJSON('/token', function (data) {
-  identity = data.identity;
-
-  // Create a Video Client and connect to Twilio
-  videoClient = new Twilio.Video.Client(data.token);
-  document.getElementById('room-controls').style.display = 'block';
-
-  // Bind button to join room
-  document.getElementById('button-join').onclick = function () {
-    roomName = document.getElementById('room-name').value;
-    if (roomName) {
-      log("Joining to portal '" + roomName + "'...");
-
-
-      videoClient.connect({ to: roomName}).then(roomJoined,
-        function(error) {
-          log('Could not connect : ' + error.message);
-        });
-    } else {
-      alert('Please enter a office name.');
-    }
-  };
-
-  // Bind button to leave room
-  document.getElementById('button-leave').onclick = function () {
-    log('Leaving portal...');
-    activeRoom.disconnect();
-  };
+$(function() {
+  App.VideoController.init();
 });
 
-// Successfully connected!
-function roomJoined(room) {
-  activeRoom = room;
 
-  log("Joined as '" + identity + "'");
-  document.getElementById('button-join').style.display = 'none';
-  document.getElementById('button-leave').style.display = 'inline';
+var App = {
+  videoClient: null,
+  activeRoom: null,
+  previewMedia: null,
+  identity: null,
+  roomName: 'Nearsoft',
+};
 
-  // Draw local video, if not already previewing
-  if (!previewMedia) {
-    room.localParticipant.media.attach('#local-media');
+
+App.VideoController = (function() {
+  function init() {
+    $.getJSON('/token', function (data) {
+      App.identity = data.identity;
+      App.videoClient = new Twilio.Video.Client(data.token);
+
+      log("Joining to portal '" + App.roomName + "'...");
+      App.videoClient.connect({ to: App.roomName}).then(_roomJoined)
+      .catch(function(error) {
+        log('Could not connect : ' + error.message);
+      });
+    });
   }
+
+  return {
+    init: init
+  }
+})();
+
+function _roomJoined(room) {
+  App.activeRoom = room;
+  log("Joined as '" + App.identity + "'");
+  room.localParticipant.media.attach('#local-media');
 
   room.participants.forEach(function(participant) {
     log("Already in Room: '" + participant.identity + "'");
+
     participant.media.attach('#remote-media');
   });
 
-  // When a participant joins, draw their video on screen
   room.on('participantConnected', function (participant) {
     log("Joining: '" + participant.identity + "'");
     participant.media.attach('#remote-media');
   });
 
-  // When a participant disconnects, note in log
   room.on('participantDisconnected', function (participant) {
     log("Participant '" + participant.identity + "' left the room");
     participant.media.detach();
   });
 
-  // When we are disconnected, stop capturing local video
-  // Also remove media for all remote participants
   room.on('disconnected', function () {
     log('Left');
     room.localParticipant.media.detach();
     room.participants.forEach(function(participant) {
       participant.media.detach();
     });
-    activeRoom = null;
-    document.getElementById('button-join').style.display = 'inline';
-    document.getElementById('button-leave').style.display = 'none';
+    App.activeRoom = null;
   });
 }
 
-//  Local video preview
-document.getElementById('button-preview').onclick = function () {
-  if (!previewMedia) {
-    previewMedia = new Twilio.Video.LocalMedia();
-    Twilio.Video.getUserMedia().then(
-    function (mediaStream) {
-      previewMedia.addStream(mediaStream);
-      previewMedia.attach('#local-media');
-    },
-    function (error) {
-      console.error('Unable to access local media', error);
-      log('Unable to access Camera and Microphone');
-    });
-  };
-};
-
-// Activity log
 function log(message) {
   console.log(message);
-}
-
-function leaveRoomIfJoined() {
-  if (activeRoom) {
-    activeRoom.disconnect();
-  }
 }
