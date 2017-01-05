@@ -11,7 +11,7 @@ var drawWords = function (jsonResponse) {
    var emojisDisplay= "Faces Found: " +jsonMessage.ComputerVision.faces.length+"  ";
   for (var i = 0; i < tags.length; i++) {
 
-    if(tags[i].confidence>.6){
+    if(tags[i].confidence>.8){
       if(emojis[tags[i].name]== null){
             emojisDisplay+= tags[i].name +"  ";   
        }else{
