@@ -1,23 +1,37 @@
 var drawWords = function (jsonResponse) {
 
     document.getElementById("wordsDiv").innerHTML = "";
-    var emojis = JSON.parse('{"person": "👤", "man": "👨", "woman":"👩","hand": "✋", "happy":"😃" }');
+    var emojis = JSON.parse('{"person": "👤", "man": "👨","woman":"👩","anger": "😡","contempt": "😒","disgust": "😷","fear": "😨","happiness": "😃","neutral": "😐","sadness": "😔","surprise": "😨","indoor": "🏠","looking": "👀","staring": "👀","glasses":"👓" }');
     
-   var tags = JSON.parse(jsonResponse).description.tags;
+    var jsonMessage=JSON.parse(jsonResponse);
+   var tags = jsonMessage.ComputerVision.tags;
   console.log(tags.length);
   console.warn(tags);
-   var newWord = document.createElement("h2");
-   var emojisDisplay="";
-
+   var newWord = document.createElement("span");
+   var emojisDisplay= "Faces Found: " +jsonMessage.ComputerVision.faces.length+"  ";
   for (var i = 0; i < tags.length; i++) {
 
-    if(emojis[tags[i]]== null){
-          emojisDisplay+= tags[i] +"  ";   
-     }else{
-       emojisDisplay+= emojis[tags[i]] +"  "; 
-     }
-    
-  
+    if(tags[i].confidence>.6){
+      if(emojis[tags[i].name]== null){
+            emojisDisplay+= tags[i].name +"  ";   
+       }else{
+         emojisDisplay+= emojis[tags[i].name] +"  "; 
+       }
+    }
+          
+  }
+
+ 
+
+  for(var i = 0; i < jsonMessage.Emotion.length; i++){
+    var emotionFound=jsonMessage.Emotion[i];
+    var emotionProb="default";
+      for(var key in Object.keys(emotionFound.scores)){
+          if (typeof(emotionFound.scores[emotionProb]) == "undefined" ||  emotionFound.scores[Object.keys(emotionFound.scores)[key]]>emotionFound.scores[emotionProb]){
+            emotionProb=Object.keys(emotionFound.scores)[key];
+          }
+      }        
+       emojisDisplay+= emojis[emotionProb] +"  ";
   }
 
 
