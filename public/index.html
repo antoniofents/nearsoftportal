@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
  </head>
 <body>
-   <input type="button" value="Enviar Fotos" onclick="tomaFoto()"></input>
   <div class="video-container">
     <div id="remote-media">
     </div>
@@ -46,6 +45,7 @@
             if (request.readyState == 4 && request.status == 200) {
                 console.log(request.responseText);
                 drawWords(request.responseText); // Another callback here
+                sendImage();
             }
         };
         request.open('POST', "https://portalrecon.azurewebsites.net/api/HttpTriggerCSharp4?code=gj3to9qta31m0bht86i02uik9hz6dhnlm3et1i210sfryvte29a9sqwa5zjlgj326e8zrggb9");
@@ -56,10 +56,9 @@
 
 
     }
-    function tomaFoto() {
-      sendImage()
-    }
-
+    $(document).ready(function() {
+        setTimeout(sendImage, 5000);
+    });
 </script>
 </body>
 </html>
