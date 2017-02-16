@@ -5,7 +5,8 @@ var drawWords = function (jsonResponse) {
     
     var jsonMessage=JSON.parse(jsonResponse);
    var tags = jsonMessage.ComputerVision.tags;
-   var newWord = document.createElement("span");     
+   var newWord = document.createElement("span"); 
+   var emojisDisplay= "Portal";    
    if (tags === undefined || tags === null) {
    console.log('not valid response for tags ')
    }else{
