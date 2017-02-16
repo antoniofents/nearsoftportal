@@ -5,12 +5,12 @@ var drawWords = function (jsonResponse) {
     
     var jsonMessage=JSON.parse(jsonResponse);
    var tags = jsonMessage.ComputerVision.tags;
+   var newWord = document.createElement("span");     
    if (tags === undefined || tags === null) {
    console.log('not valid response for tags ')
    }else{
     console.log(tags.length);
     console.warn(tags);
-     var newWord = document.createElement("span");
      var emojisDisplay= "Faces Found: " +jsonMessage.ComputerVision.faces.length+"  ";
       for (var i = 0; i < tags.length; i++) {
 
