@@ -12,41 +12,70 @@ var path = require('path');
 var AccessToken = require('twilio').AccessToken;
 var VideoGrant = AccessToken.VideoGrant;
 var express = require('express');
-var randomUsername = require('./randos');
+var bodyParser = require('body-parser')
 
 // Create Express webapp
 var app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+var usersAdmited=['CUU', 'HMO', 'CDMX' ];
+var usersConected=[];
 
 /*
-Generate an Access Token for a chat application user - it generates a random
-username for the client requesting a token, and takes a device ID as a query
-parameter.
+Generate an Access Token 
 */
 app.get('/token', function(request, response) {
-    var identity = randomUsername();
+
+   
+    if(request.query.id==null || usersAdmited.indexOf(request.query.id)==-1 || usersConected.indexOf(request.query.id)!=-1){
+         console.log('please try again later');
+          response.redirect("/wait.html")
+        return;
+    }else{
+        usersConected.push(request.query.id);
+        console.log(usersConected);
     
-    // Create an access token which we will sign and return to the client,
-    // containing the grant we just created
-    var token = new AccessToken(
-        process.env.TWILIO_ACCOUNT_SID,
-        process.env.TWILIO_API_KEY,
-        process.env.TWILIO_API_SECRET
-    );
+        var identity =request.query.id;
 
-    // Assign the generated identity to the token
-    token.identity = identity;
+        // Create an access token which we will sign and return to the client,
+        // containing the grant we just created
+        var token = new AccessToken(
+            process.env.TWILIO_ACCOUNT_SID,
+            process.env.TWILIO_API_KEY,
+            process.env.TWILIO_API_SECRET
+        );
 
-    //grant the access token Twilio Video capabilities
-    var grant = new VideoGrant();
-    grant.configurationProfileSid = process.env.TWILIO_CONFIGURATION_SID;
-    token.addGrant(grant);
+        // Assign the generated identity to the token
+           token.identity = identity;
 
-    // Serialize the token to a JWT string and include it in a JSON response
-    response.send({
-        identity: identity,
-        token: token.toJwt()
-    });
+        //grant the access token Twilio Video capabilities
+        var grant = new VideoGrant();
+        grant.configurationProfileSid = process.env.TWILIO_CONFIGURATION_SID;
+        token.addGrant(grant);
+     
+
+        response.send({
+            identity: identity,
+            token: token.toJwt()
+        });
+    }
+});
+
+app.get('/restore', function(request,res){
+    console.log("removing all users ");
+    usersConected= [];
+    res.redirect("wait.html")
+    return;
+});
+
+app.post('/refreshUsers', function(request,res){
+    console.log("removing:"+request.body.participant);
+    var index = usersConected.indexOf(request.body.participant);   
+    if (index > -1) {
+        usersConected.splice(index, 1);
+    }
 });
 
 // Create http server and run it
