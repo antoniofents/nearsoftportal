@@ -14,8 +14,8 @@ var App = {
 
 App.VideoController = (function() {
   function init() {
+
     loadStyles({id: getUrlParameter('id')});
-   
     $.getJSON('/token',{id: getUrlParameter('id')}, function (data) {
       if(data.identity!=null){
           App.identity = data.identity;
@@ -28,7 +28,9 @@ App.VideoController = (function() {
       }else{
         window.location.replace("wait.html");
       }
+
     });
+   
   }
 
   return {
@@ -41,6 +43,7 @@ function _roomJoined(room) {
 
   App.activeRoom = room;
   log("Joined as '" + App.identity + "");
+
   room.localParticipant.media.attach('#local-media');
  
   room.participants.forEach(function(participant) {
@@ -49,8 +52,8 @@ function _roomJoined(room) {
   });
 
   room.on('participantConnected', function (participant) {
-    log("Joining: '" + participant.identity + "");     
-    participant.media.attach('#remote-media');
+    log("Joining: '" + participant.identity + "");      
+   participant.media.attach('#remote-media');
   });
 
   room.on('participantDisconnected', function (participant) {
@@ -94,6 +97,20 @@ function loadStyles(user){
   link.media = "screen,print";
 
   document.getElementsByTagName( "head" )[0].appendChild( link );
+}
+
+
+function mute(){
+  console.log('mute');
+ App.activeRoom.localParticipant.media.audioTracks.forEach(function(track) {
+    track.disable(true);
+  });
+}
+function unMute(){
+  console.log('unMute');
+ App.activeRoom.localParticipant.media.audioTracks.forEach(function(track) {
+    track.enable(true);
+  });
 }
 
 function log(message) {

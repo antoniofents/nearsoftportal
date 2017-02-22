@@ -22,6 +22,7 @@ app.use(bodyParser.json());
 
 var usersAdmited=['CUU', 'HMO', 'CDMX' ];
 var usersConected=[];
+var participants={};
 
 /*
 Generate an Access Token 
@@ -67,9 +68,11 @@ app.get('/token', function(request, response) {
 app.get('/restore', function(request,res){
     console.log("removing all users ");
     usersConected= [];
+    participants={};
     res.redirect("wait.html")
     return;
 });
+
 
 app.post('/refreshUsers', function(request,res){
     console.log("removing:"+request.body.participant);
@@ -78,6 +81,7 @@ app.post('/refreshUsers', function(request,res){
         usersConected.splice(index, 1);
     }
 });
+
 
 // Create http server and run it
 var server = http.createServer(app);
