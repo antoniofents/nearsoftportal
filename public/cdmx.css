@@ -21,7 +21,7 @@ html, body {
 
 #remote-media video {
   height: 90%;
-  width: 50%
+  width: 50%;
   transform: rotate(90deg);
   display: inline-block;
   background-color: #555;
