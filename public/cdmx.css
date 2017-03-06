@@ -20,8 +20,9 @@ html, body {
 }
 
 #remote-media video {
-  height: 100%;
-  width: 50%;
+  height: 90%;
+  width: 50%
+  transform: rotate(90deg);
   display: inline-block;
   background-color: #555;
   object-fit: inherit;
