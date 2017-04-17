@@ -31,33 +31,43 @@
   <script src="quickstart.js"></script>
   <script>
     sendImage = function(){
-        var c = document.getElementById("myCanvas");
-        var ctx = c.getContext("2d");
-        var el = document.getElementById('local-media')
-        var img = el.lastChild;
 
-        ctx.drawImage(img, 10, 10);
+        try {
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+            var el = document.getElementById('local-media')
+            var img = el.lastChild;
 
-        var dataurl=c.toDataURL();
-        var datos='{"name":"'+dataurl.replace("data:image/png;base64,","")+'"}';
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function(){
-            if (request.readyState == 4 && request.status == 200) {
-                console.log(request.responseText);
-                drawWords(request.responseText); // Another callback here
-                sendImage();
-            }
-        };
-        request.open('POST', "https://portalrecon.azurewebsites.net/api/HttpTriggerCSharp4?code=gj3to9qta31m0bht86i02uik9hz6dhnlm3et1i210sfryvte29a9sqwa5zjlgj326e8zrggb9");
-        request.setRequestHeader('Access-Control-Allow-Headers', '*');
-        request.setRequestHeader('Access-Control-Allow-Origin', '*');
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.send(datos);
+            ctx.drawImage(img, 10, 10);
+
+            var dataurl=c.toDataURL();
+            var datos='{"name":"'+dataurl.replace("data:image/png;base64,","")+'"}';
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function(){
+                if (request.readyState == 4 && request.status == 200) {
+                    console.log(request.responseText);
+                    drawWords(request.responseText); // Another callback here
+                    //sendImage();
+                }
+            };
+            request.open('POST', "https://portalrecon.azurewebsites.net/api/HttpTriggerCSharp4?code=gj3to9qta31m0bht86i02uik9hz6dhnlm3et1i210sfryvte29a9sqwa5zjlgj326e8zrggb9");
+            request.setRequestHeader('Access-Control-Allow-Headers', '*');
+            request.setRequestHeader('Access-Control-Allow-Origin', '*');
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(datos);
+        }
+        catch(err) {
+            location.reload();
+        }
+
+
+       
 
 
     }
     $(document).ready(function() {
-        setTimeout(sendImage, 5000);
+        setInterval(sendImage, 5000);
+        setInterval(function(){location.reload(); }, 1000*60*45);
     });
 </script>
 </body>
