@@ -9,7 +9,7 @@ process.env.TWILIO_CONFIGURATION_SID
 require('dotenv').load();
 var http = require('http');
 var path = require('path');
-var AccessToken = require('twilio').AccessToken;
+var AccessToken = require('twilio').jwt.AccessToken;;
 var VideoGrant = AccessToken.VideoGrant;
 var express = require('express');
 var bodyParser = require('body-parser')
@@ -31,37 +31,41 @@ app.get('/token', function(request, response) {
 
    
     if(request.query.id==null || usersAdmited.indexOf(request.query.id)==-1 || usersConected.indexOf(request.query.id)!=-1){
+         console.log('rejected connection');
+         console.log(request.query.id);
+         console.log('**');
+         console.log(usersConected);
          console.log('please try again later');
         response.send({
             redirect: "/wait.html"
         });
     }else{
+        console.log('connection accepted');
         usersConected.push(request.query.id);
         console.log(usersConected);
     
         var identity =request.query.id;
 
-        // Create an access token which we will sign and return to the client,
-        // containing the grant we just created
-        var token = new AccessToken(
+        const room = request.query.room;
+        
+        const token = new AccessToken(
             process.env.TWILIO_ACCOUNT_SID,
             process.env.TWILIO_API_KEY,
             process.env.TWILIO_API_SECRET
         );
 
-        // Assign the generated identity to the token
-           token.identity = identity;
+         token.identity = identity;
 
-        //grant the access token Twilio Video capabilities
-        var grant = new VideoGrant();
-        grant.configurationProfileSid = process.env.TWILIO_CONFIGURATION_SID;
-        token.addGrant(grant);
-     
+          // Grant the access token Twilio Video capabilities
+          const grant = new VideoGrant();
+          grant.room = room;
+          token.addGrant(grant);
 
-        response.send({
+         response.send({
             identity: identity,
             token: token.toJwt()
         });
+
     }
 });
 
