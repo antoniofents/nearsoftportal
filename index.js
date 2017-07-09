@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var usersAdmited=['CUU', 'HMO', 'CDMX' ];
+var usersAdmited=['CUU', 'HMO', 'CDMX', 'VISIT' ];
 var usersConected=[];
 var participants={};
 
